@@ -3,7 +3,7 @@ Python scripts to convert any barcode image to an Arduino prog_memory
 
 ***
 
-# C
+
 ## Links to project information
 
 
