@@ -1,0 +1,9 @@
+CRC can also conflict with STX, ETX....
+Should be fixed on the Loop in arduino function()
+
+
+Introduce a interrupt: to the getSerialCommand() 
+In processing STX, ETX, the DataChunk can also have many 02,03 values similar to the Count Number issue.
+
+Serial.setTimeout() sets the maximum milliseconds to wait for serial data. It defaults to 1000 milliseconds.
+Serial.setTimeout() inherits from the Stream utility class.

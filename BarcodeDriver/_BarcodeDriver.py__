@@ -1,0 +1,125 @@
+
+#!/usr/bin/python
+
+from __future__ import print_function
+import os
+import numpy as np
+from pip._vendor.pep517.compat import FileNotFoundError
+from scipy import misc
+from itertools import islice
+
+import serial, time
+
+class BarcodeDriver:
+    def __init__(self):
+        self.__members = 'Test'
+        self.__path = ''
+
+    def setPath(self, path):
+        self.__path = path
+
+
+
+    #COM port variable set
+    def getComPort(self, comport):
+        self.__comport =comport
+
+    def __readImage(self, path, name):
+        image = misc.imread(os.path.join(path, name), flatten=1)
+        return image
+
+    def __getPixelStream(self, image):
+        ps = image[0] < 255
+        ps = ps.astype(np.int)
+        return ps
+
+    def __splitToChunks(self, it, size):
+        it = iter(it)
+        return iter(lambda: tuple(islice(it, size)), ())
+
+    def __serialWritePixelStream(self, ps, ser):
+        lst = list(self.__splitToChunks(ps, 30))
+        ser.write('3')
+        time.sleep(0.5)
+        for i in range(0, len(lst)):
+            arr = np.array(lst[i])
+            ss = ''.join(map(str, arr)).encode('ascii')
+            #print(ss)
+            ser.write(ss)
+            # print('b\'' + ''.join(map(str, arr)) + '\'')
+            time.sleep(0.5)
+        ser.write('2')
+        time.sleep(1.0)
+
+    def __writeToArduino(self, TestCallPath, BName, ser):
+        try:
+            image = self.__readImage(TestCallPath, BName)
+        except IOError as e:
+            print(os.strerror(e.errno))
+            #print('exception - File Not found')
+            return  -1
+        ps = self.__getPixelStream(image)
+        self.__serialWritePixelStream(ps, ser)
+        return 0
+
+
+
+    def __getResponseFromSerial(self, ser):
+        with open('bc_class.csv', 'w') as f:
+            while True:
+                response = ser.readline()
+                print(response, file=f)  # gives  48 49  @end 50
+                if response == b'':
+                    break
+
+    """
+     | **showBarCode(<BarcodeName>)**:
+     |  1. Input : <BarcodeFile.bmp> name
+     |  2. Return: Success if DataWritten
+     |  3. Please verify with the BarCodeMap.xml
+     |  4. sendBarCode() called from BarcodeChanger encapsulation
+
+     """
+
+    def showBarcode(self, BName):
+        numOfLines = 0
+        try:
+            ser = serial.Serial('COM9', 9600, timeout=10, xonxoff=False, rtscts=False, dsrdtr=False)
+        except serial.serialutil.SerialException:
+             print ('exception - Can not open device COM9')
+             return -1
+
+        if ser.isOpen():
+            try:
+                ser.flushInput()  # flush input buffer, discarding all its contents
+                ser.flushOutput()  # flush output buffer, aborting current output
+
+
+                while True:
+                    response = ser.readline()
+                    print(response)
+
+                    numOfLines = numOfLines + 1
+
+                    if (numOfLines >= 2):
+                        break
+
+                time.sleep(1)
+                if self.__writeToArduino(self.__path, BName, ser) == -1:
+                    print("Writing to Arduino Failed......")
+                    return -1
+                self.__getResponseFromSerial(ser)
+
+
+
+                print("write data: Barcode Written")
+
+            except serial.serialutil.SerialException:
+                print ('Exception - Can not Communicate with Arduino')
+                return -1
+
+            ser.close()
+
+        else:
+            print ("cannot open serial port")
+        return 0
