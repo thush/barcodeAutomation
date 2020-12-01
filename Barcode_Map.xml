@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Barcodes>
+    <B1>
+		<Value>054321</Value>
+		<type>DataMatrix</type>
+        <Angel></Angel>
+        <Level></Level>
+        <eInkFile name="RM_CustomPatch_RT.bmp"/>
+    </B1>
+    <B2>
+		<Value>296_128_UKPostal</Value>
+		<type>UKPostal</type>
+        <Angel></Angel>
+        <Level></Level>
+        <eInkFile name="BHi.bmp"/>
+    </B2>
+    <B3>
+		<Value>testX.bmp</Value>
+		<type>Read</type>
+        <Angel></Angel>
+        <Level></Level>
+        <eInkFile name="testx.bmp"/>
+    </B3>
+    <B4>
+		<Value>296_128</Value>
+		<type>USPS</type>
+        <Angel></Angel>
+        <Level></Level>
+        <eInkFile name="296_128_USPS.bmp"/>
+    </B4>
+    <B5>
+		<Value>tec-it.com</Value>
+		<type>QR</type>
+        <Angel></Angel>
+        <Level></Level>
+        <eInkFile name="296_128_Redone.png"/>
+    </B5>
+
+    <B6>
+		<Value>tec-it.com</Value>
+		<type>QR</type>
+        <Angel></Angel>
+        <Level></Level>
+        <eInkFile name="296_128_Mirrored_MICRO_QR.bmp"/>
+    </B6>
+    <B7>
+		<Value>tec-it.com</Value>
+		<type>QR</type>
+        <Angel></Angel>
+        <Level></Level>
+        <eInkFile name="296_128_AZTEC_BC427.png"/>
+    </B7>
+
+
+</Barcodes>
